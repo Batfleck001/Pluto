@@ -1,32 +1,20 @@
-from app import supabase
-from app import app 
-from fastapi import requests
-from pydantic import BaseModel
+from infrastructure.supabase.supabase import supabase
+from fastapi import requests, APIRouter
 from datetime import datetime, timezone
+from infrastructure.models.models import (
+    newItem,
+    updatePurchase,
+    deleteCategory,
+    deleteItem
+)
 
-class newItem(BaseModel):
-    category : str
-    item : str
-    quantity : int
-    unit : str
+router = APIRouter()
 
-class updatePurchase(BaseModel):
-    item : str
-    quantity : int
-    unit : str
-
-class deleteCategory(BaseModel):
-    category : str
-
-class deleteItem(BaseModel):
-    item : str
-
-
-@app.get("/")
+@router.get("/")
 def home():
     return {"mesage" : "inventory"}
 
-@app.get("/all")
+@router.get("/all")
 def all():
     res = (supabase.table("categories")
            .select("name, items(id, name, in_stock, purchases(id, quantity, unit, purchased_at))")
@@ -38,7 +26,7 @@ def all():
 
 #====================== New category and Item creation ========================
 
-@app.post("/new_item")
+@router.post("/new_item")
 def new_item(item : newItem):
     category = (supabase.table("categories")
         .select("*")
@@ -112,7 +100,7 @@ def new_item(item : newItem):
 
 #====================== update purchase ============================================
 
-@app.post("/update_purchase")
+@router.post("/update_purchase")
 def update_purchase(purchase: updatePurchase):
     item = (supabase.table("items")
         .select("*")
@@ -140,7 +128,7 @@ def update_purchase(purchase: updatePurchase):
 # ==================== delete apis =============================
 
 
-@app.delete("/delete_category")
+@router.delete("/delete_category")
 def delete_category(categories : deleteCategory):
     res = (supabase.table("categories")
         .delete()
@@ -153,7 +141,7 @@ def delete_category(categories : deleteCategory):
     else :
         return {"error" : "not found"}
 
-@app.delete("/delete_item")
+@router.delete("/delete_item")
 def delete_item(items : deleteItem):
     res = (supabase.table("items")
         .delete()

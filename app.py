@@ -1,17 +1,10 @@
 from fastapi import FastAPI
-from supabase import create_client
-from dotenv import load_dotenv
-import os
-
-
-load_dotenv()
+import routes.api as api
+import uvicorn
 
 app =  FastAPI()
 
-supabase = create_client(
-    os.environ.get("SUPABASE_URL"),
-    os.environ.get("SUPABASE_KEY")
-)
+app.include_router(api.router)
 
-import api
-
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
