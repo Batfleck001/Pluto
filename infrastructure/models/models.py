@@ -7,6 +7,27 @@ class newItem(BaseModel):
     quantity : int
     unit : str
 
+class create_user_request(BaseModel):
+    username: str
+
+class request_bodyMetrics(BaseModel):
+    user : str
+    age : int
+    height : int
+    weight : int
+    gender : str
+    exercise_per_week : int
+
+class response_bodyMetrics(BaseModel):
+    user : str
+    age : int
+    height : int
+    weight : int
+    gender : str
+    BMI : float
+    BMR : float
+    TDEE : float
+
 class updatePurchase(BaseModel):
     item : str
     quantity : int
